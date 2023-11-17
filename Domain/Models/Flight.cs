@@ -14,6 +14,11 @@ namespace Domain.Models
 
         // Properties (Id, Row, Column, FlightIdFK, Passport, PricePaid, Cancelled)
 
+        public Flight()
+        {
+            Id = Guid.NewGuid();
+        }
+
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }

@@ -12,6 +12,10 @@ namespace Domain.Models
     {
         // Properties (Id, Rows, Columns, DepartureDate, ArrivalDate, CountryFrom, CountryTo, WholesalePrice, CommissionRate)
 
+        public Ticket()
+        {
+            Id = Guid.NewGuid();
+        }
 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

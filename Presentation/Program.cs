@@ -1,7 +1,6 @@
-using Data.DataContext;
+using DataAccess.DataContext;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Presentation.Data;
 
 namespace Presentation
 {

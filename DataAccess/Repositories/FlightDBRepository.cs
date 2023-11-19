@@ -17,14 +17,19 @@ namespace DataAccess.Repositories
             _BookingFlightContext = BookingFlightContext;
         }
 
-        public List<Flight> GetFlights()
+        public IQueryable<Flight> GetFlights()
         {
-            return _BookingFlightContext.Flights.ToList();
+            return _BookingFlightContext.Flights;
+        }
+        public Flight? GetFlight(Guid id)
+        {
+            return _BookingFlightContext.Flights.SingleOrDefault(t => t.Id == id);
         }
 
-        public Flight GetFlight(Guid flightId)
+
+        public List<Flight> GetFlights(Guid flightId)
         {
-            return _BookingFlightContext.Flights.FirstOrDefault(f => f.Id == flightId);
+            return _BookingFlightContext.Flights.ToList();
         }
 
 

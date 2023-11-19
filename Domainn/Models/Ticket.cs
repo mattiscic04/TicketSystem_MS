@@ -20,12 +20,19 @@ namespace Domain.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
+
+        [Required]
+        public string Name { get; set; }
+
+        [Required]
+        public string Surname { get; set; }
         public int Row { get; set; }
         public int Column { get; set; }
 
 
         [ForeignKey(nameof(Flight))]
         public Guid FlightIdFK { get; set; }
+
         public virtual Flight Flight { get; set; }
 
         public string Passport { get; set; }

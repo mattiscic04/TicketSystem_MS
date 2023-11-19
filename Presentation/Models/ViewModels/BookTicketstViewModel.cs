@@ -1,13 +1,20 @@
-﻿using Domain.Models;
+﻿using DataAccess.Repositories;
+using Domain.Models;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Presentation.Models.ViewModels
 {
-    public class ListTicketVIewModel
+    public class BookTicketstViewModel
     {
 
-        public Guid Id { get; set; }
+        public BookTicketstViewModel() { }
+
+        public BookTicketstViewModel(FlightDbRepository flightDbRepository) 
+        {
+            Flights = flightDbRepository.GetFlights();
+        }
+
 
         [Required]
         public string Name { get; set; }
@@ -16,10 +23,12 @@ namespace Presentation.Models.ViewModels
         public string Surname { get; set; }
         public int Row { get; set; }
         public int Column { get; set; }
-        public string FlightName { get; set; }
+
+        public IQueryable<Flight> Flights { get; set; }
+        public int FlightIdFK { get; set; }
+
         public string Passport { get; set; }
         public double PricePaid { get; set; }
         public bool Cancelled { get; set; }
-
     }
 }

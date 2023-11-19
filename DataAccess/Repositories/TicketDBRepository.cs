@@ -44,7 +44,16 @@ namespace DataAccess.Repositories
 
         public void Cancel(int ticketId)
         {
-
+            var ticket = _BookingFlightContext.Tickets.Find(ticketId);
+            if (ticket != null)
+            {
+                ticket.Cancelled = true;
+                _BookingFlightContext.SaveChanges();
+            }
+            else
+            {
+                throw new Exception("No tickets to cancel");
+            }
         }
 
         public List<Ticket> GetTickets(Guid flightId)
@@ -61,6 +70,7 @@ namespace DataAccess.Repositories
                 .Where(t => t.FlightIdFK == flightId)
                 .ToList();
         }
+
     }
 }
 

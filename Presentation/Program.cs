@@ -22,8 +22,10 @@ namespace Presentation
             builder.Services.AddControllersWithViews();
 
 
-            builder.Services.AddScoped(typeof(TicketDBRepository));
+            //Register the type of class with the services collection
+            builder.Services.AddScoped(typeof(TicketDBRepository)); 
             builder.Services.AddScoped(typeof(FlightDbRepository));
+
 
 
 

@@ -13,7 +13,7 @@ namespace Domain.Models
     public class Flight
     {
 
-        // Properties (Id, Row, Column, FlightIdFK, Passport, PricePaid, Cancelled)
+        // Properties (Id, Rows, Columns, DepartureDate, ArrivalDate, CountryFrom, CountryTo, WholesalePrice, CommissionRate)
 
         public Flight()
         {
@@ -23,16 +23,13 @@ namespace Domain.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
-        public int Row { get; set; }
-        public int Column { get; set; }
-
-
-        [ForeignKey(nameof(Flight))]
-        public Guid FlightIdFK { get; set; }
-        public virtual Ticket Ticket { get; set; }
-
-        public string Passport { get; set; }
-        public double PricePaid { get; set; }
-        public bool Cancelled { get; set; }
+        public int Rows { get; set; }
+        public int Columns { get; set; }
+        public DateTime DepartureDate { get; set; }
+        public DateTime ArrivalDate { get; set; }
+        public string CountryFrom { get; set; }
+        public string CountryTo { get; set; }
+        public double WholesalePrice { get; set; }
+        public double CommisionRate { get; set; }
     }
 }

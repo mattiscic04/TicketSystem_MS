@@ -70,7 +70,6 @@ namespace DataAccess.Repositories
                 .Where(t => t.FlightIdFK == flightId)
                 .ToList();
         }
-
     }
 }
 

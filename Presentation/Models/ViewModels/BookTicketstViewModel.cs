@@ -27,8 +27,11 @@ namespace Presentation.Models.ViewModels
         public IQueryable<Flight> Flights { get; set; }
         public int FlightIdFK { get; set; }
 
-        public string Passport { get; set; }
+        //public string Passport { get; set; }
+
+        public IFormFile Passport { get; set; }
         public double PricePaid { get; set; }
         public bool Cancelled { get; set; }
+
     }
 }

@@ -21,20 +21,25 @@ namespace Presentation.Controllers
 
         public IActionResult Index()
         {
-            IQueryable<Ticket> list = _ticketRepository.GetTicket().OrderBy(x => x.Id);
-            var output = from t in list
-                          select new ListTicketVIewModel()
-                          {
-                              Id = t.Id,
-                              Name = t.Name,
-                              Surname = t.Surname,
-                              Row = t.Row,
-                              Column = t.Column,
-                              Passport = t.Passport,
-                              PricePaid = t.PricePaid,
-                              Cancelled = t.Cancelled,
-                              FlightName = t.Flight.Id.ToString()
-                          };
+            // Get the current time
+            DateTime currentTime = DateTime.Now;
+
+            // Filter out flights that are in the past
+            IQueryable<Flight> list = _flightRepository.GetFlights()
+                .Where(x => x.DepartureDate > currentTime)
+                .OrderBy(x => x.Id);
+
+            var output = from f in list
+                         select new ListFlightVIewModel()
+                         {
+                             Id = f.Id,
+                             Rows = f.Rows,
+                             Columns = f.Columns,
+                             DepartureDate = f.DepartureDate,
+                             ArrivalDate = f.ArrivalDate,
+                             CountryFrom = f.CountryTo,
+                             CountryTo = f.CountryFrom
+                         };
 
             return View(output);
         }
@@ -44,25 +49,47 @@ namespace Presentation.Controllers
         {
             var flights = _flightRepository.GetFlights().ToList();
             BookTicketstViewModel myModel = new BookTicketstViewModel(_flightRepository);
-            { 
-
+            {
+                //Flights = flights;
             }
             return View(myModel);
         }
 
         [HttpPost]
-        public IActionResult Create(BookTicketstViewModel myModel)
+        public IActionResult Create(BookTicketstViewModel myModel, [FromServices] IWebHostEnvironment host, [FromRoute] Guid Id)
         {
+            string relativePath = "";
             try
             {
+                // Validate that the provided FlightId exists in the Flights table
+                var existingFlight = _flightRepository.GetFlight(Id);
+                if (existingFlight == null)
+                {
+                    TempData["error"] = "Invalid FlightId provided.";
+                    return RedirectToAction("Index");
+                }
+
+                string filename = Guid.NewGuid() + Path.GetExtension(myModel.Passport.FileName);
+
+                string absolutePath = host.WebRootPath + @"\images\" + filename;
+
+                relativePath = @"/images/" + filename;
+
+                using (FileStream fs = new FileStream(absolutePath, FileMode.CreateNew))
+                {
+                    myModel.Passport.CopyTo(fs);
+                    fs.Flush();
+                    fs.Close();
+                }
+
                 _ticketRepository.Book(new Ticket()
                 {
+                    FlightIdFK = Id,
                     Name = myModel.Name,
                     Surname = myModel.Surname,
                     Row = myModel.Row,
                     Column = myModel.Column,
-                    Passport = myModel.Passport,
-
+                    Passport = relativePath
                 });
 
                 TempData["message"] = "Ticket saved Successfully";

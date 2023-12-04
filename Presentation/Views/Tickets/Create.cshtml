@@ -4,10 +4,149 @@
     ViewData["Title"] = "Create";
 }
 
+<style>
+    .seat-picker {
+        display: grid;
+        grid-template-columns: @($"repeat({Model.SelectedFlight.Columns}, 1fr)");
+        gap: 10px;
+    }
+
+    .seat {
+        width: 50px;
+        height: 50px;
+        border: 1px solid #ccc;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+
+        .seat.disabled {
+            background-color: #ddd;
+            cursor: not-allowed;
+        }
+
+        .seat.selected {
+            background-color: #3498db;
+            color: #fff;
+        }
+</style>
+
 <h1>Create</h1>
 
 <h4>Ticket Booking System</h4>
 <hr />
+
+<form asp-action="Create" enctype="multipart/form-data">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="form-group">
+        <label class="control-label">Select a Seat</label>
+        <div id="seat-picker" class="seat-picker"></div>
+        <input type="hidden" id="selected-row" name="Row" />
+        <input type="hidden" id="selected-column" name="Column" />
+    </div>
+
+
+</form>
+
+
+@section scripts {
+    <script>
+        const seatPicker = document.getElementById('seat-picker');
+        const selectedSeatDisplay = document.getElementById('selected-seat');
+        const selectedRowInput = document.getElementById('selected-row');
+        const selectedColumnInput = document.getElementById('selected-column');
+        const selectedSeats = new Set();
+
+        // Function to create seats dynamically based on flight data
+        function createSeats(rows, columns) {
+            for (let row = 1; row <= rows; row++) {
+                for (let col = 1; col <= columns; col++) {
+                    const seat = document.createElement('div');
+                    seat.classList.add('seat');
+                    seat.dataset.row = row;
+                    seat.dataset.column = col;
+                    seat.innerText = `${row}-${col}`;
+                    seat.addEventListener('click', toggleSeat);
+                    seatPicker.appendChild(seat);
+                }
+            }
+        }
+
+        // Function to toggle seat selection
+        function toggleSeat() {
+            const seat = this;
+            const seatId = `${seat.dataset.row}-${seat.dataset.column}`;
+
+            if (selectedSeats.has(seatId)) {
+                selectedSeats.delete(seatId);
+                seat.classList.remove('selected');
+            } else {
+                selectedSeats.add(seatId);
+                seat.classList.add('selected');
+            }
+
+            updateSelectedSeatDisplay();
+            updateFormInputs();
+        }
+
+
+        // Function to update form inputs
+        function updateFormInputs() {
+            const selectedSeat = Array.from(selectedSeats)[0]; 
+            if (selectedSeat) {
+                const [row, column] = selectedSeat.split('-');
+                selectedRowInput.value = row;
+                selectedColumnInput.value = column;
+            } else {
+                selectedRowInput.value = '';
+                selectedColumnInput.value = '';
+            }
+        }
+
+        // Initialize the seat picker based on flight data
+        const rows = @Model.SelectedFlight.Rows;
+        const columns = @Model.SelectedFlight.Columns;
+        createSeats(rows, columns);
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Get all seat elements (customize this selector based on your actual layout)
+            var seatElements = document.querySelectorAll('.seat');
+
+            // Add click event listener to each seat
+            seatElements.forEach(function (seat) {
+                seat.addEventListener('click', function () {
+                    // Get the row and column values from the seat element
+                    var selectedRow = seat.getAttribute('data-row');
+                    var selectedColumn = seat.getAttribute('data-column');
+
+                    // Get the hidden input fields
+                    var selectedRowInput = document.getElementById('selectedRow');
+                    var selectedColumnInput = document.getElementById('selectedColumn');
+
+                    // Toggle seat selection
+                    if (selectedRowInput.value === selectedRow && selectedColumnInput.value === selectedColumn) {
+                        // Deselect the seat
+                        selectedRowInput.value = '';
+                        selectedColumnInput.value = '';
+
+                        // Remove 'selected' class
+                        seat.classList.remove('disabled');
+                    } else {
+                        // Select the seat
+                        selectedRowInput.value = selectedRow;
+                        selectedColumnInput.value = selectedColumn;
+
+                        seat.classList.add('selected');
+                    }
+                });
+            });
+        });
+    </script>
+}
+
+
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create" enctype="multipart/form-data">
@@ -23,15 +162,17 @@
                 <span asp-validation-for="Surname" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Row" class="control-label"></label>
-                <input asp-for="Row" class="form-control" />
+                <label asp-for="Row" class="control-label">Selected Row:</label>
+                <input asp-for="Row" class="form-control" id="selectedRow" readonly />
                 <span asp-validation-for="Row" class="text-danger"></span>
             </div>
+
             <div class="form-group">
-                <label asp-for="Column" class="control-label"></label>
-                <input asp-for="Column" class="form-control" />
+                <label asp-for="Column" class="control-label">Selected Column:</label>
+                <input asp-for="Column" class="form-control" id="selectedColumn" readonly />
                 <span asp-validation-for="Column" class="text-danger"></span>
             </div>
+
  
             <!-- FlightIdFK taken from the URL -->
             <input type="hidden" asp-for="FlightIdFK" />

@@ -39,20 +39,32 @@ namespace Presentation.Controllers
                              ArrivalDate = f.ArrivalDate,
                              CountryFrom = f.CountryTo,
                              CountryTo = f.CountryFrom,
-                             retailPrice = f.WholesalePrice*f.CommisionRate
+                             retailPrice = f.WholesalePrice*f.CommisionRate,
                          };
+
+
 
             return View(output);
         }
 
         [HttpGet]
-        public IActionResult Create() 
+        public IActionResult Create([FromRoute] Guid Id)
         {
             var flights = _flightRepository.GetFlights().ToList();
-            BookTicketstViewModel myModel = new BookTicketstViewModel(_flightRepository);
+            var selectedFlight = flights.FirstOrDefault(f => f.Id == Id);
+
+            if (selectedFlight == null)
             {
-                //Flights = flights;
+                // Handle the case where the selected flight is not found
+                TempData["error"] = "Invalid FlightId provided.";
+                return RedirectToAction("Index");
             }
+
+            var myModel = new BookTicketstViewModel(_flightRepository)
+            {
+                SelectedFlight = selectedFlight
+            };
+
             return View(myModel);
         }
 
@@ -69,6 +81,8 @@ namespace Presentation.Controllers
                     TempData["error"] = "Invalid FlightId provided.";
                     return RedirectToAction("Index");
                 }
+
+
 
                 ////Check if the selected flight is fully booked or canceled
                 //var existingTickets = _ticketRepository.GetTicketsForFlight(Id);
@@ -103,22 +117,22 @@ namespace Presentation.Controllers
                 double wholesalePrice = existingFlight.WholesalePrice;
                 double pricePaid = wholesalePrice + (wholesalePrice * commissionRate);
 
-                _ticketRepository.Book(new Ticket()
-                {
-                    FlightIdFK = Id,
-                    Name = myModel.Name,
-                    Surname = myModel.Surname,
-                    Row = myModel.Row,
-                    Column = myModel.Column,
-                    Passport = relativePath,
-                    PricePaid = pricePaid,
-                    //Owner = User.Identity.Name
+                    _ticketRepository.Book(new Ticket()
+                    {
+                        FlightIdFK = Id,
+                        Name = myModel.Name,
+                        Surname = myModel.Surname,
+                        Row = myModel.Row,
+                        Column = myModel.Column,
+                        Passport = relativePath,
+                        PricePaid = pricePaid,
+                        //Owner = User.Identity.Name
 
-                });
+                    });
 
-                TempData["message"] = "Ticket booked Successfully";
+                    TempData["message"] = "Ticket booked Successfully";
+                    return RedirectToAction("Index");
 
-                return RedirectToAction("Index");
 
             }
             catch (Exception ex)

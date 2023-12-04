@@ -31,6 +31,8 @@ namespace Presentation.Models.ViewModels
 
         [Display(Name = "Retail Price")]
         public double retailPrice { get; set; }
+        public bool IsFullyBooked { get; set; }
+
 
     }
 }

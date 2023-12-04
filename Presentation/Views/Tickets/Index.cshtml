@@ -67,9 +67,9 @@
                 @Html.DisplayFor(modelItem => item.retailPrice)
             </td>
             <td>
-                @Html.ActionLink("Book", "Create", "Tickets", new { id = item.Id }, null) 
-@*                 @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Cancel", "Cancel", new { id=item.Id }) *@
+                @Html.ActionLink("Book", "Create", "Tickets", new { id = item.Id }, null)
+                @*                 @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+            @Html.ActionLink("Cancel", "Cancel", new { id=item.Id }) *@
             </td>
         </tr>
 }

@@ -10,9 +10,11 @@ namespace Presentation.Models.ViewModels
 
         public BookTicketstViewModel() { }
 
+
         public BookTicketstViewModel(FlightDbRepository flightDbRepository) 
         {
             Flights = flightDbRepository.GetFlights();
+            //SeatAvailability = new Dictionary<int, Dictionary<(int, int), bool>>();
         }
 
 
@@ -32,6 +34,12 @@ namespace Presentation.Models.ViewModels
         public IFormFile Passport { get; set; }
         public double PricePaid { get; set; }
         public bool Cancelled { get; set; }
+
+        public Flight SelectedFlight { get; set; }
+
+
+        //public Dictionary<int, Dictionary<(int, int), bool>> SeatAvailability { get; set; }
+
 
     }
 }

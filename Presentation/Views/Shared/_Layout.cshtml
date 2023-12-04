@@ -36,8 +36,14 @@
             
             @if (TempData["error"] != null)
             {
-                <div class="alert alert-primary" role="alert">
+                <div class="alert alert-danger" role="alert">
                     @TempData["error"].ToString()
+                </div>
+            }
+            @if (TempData["message"] != null)
+            {
+                <div class="alert alert-primary" role="alert">
+                    @TempData["message"].ToString()
                 </div>
             }
             

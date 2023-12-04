@@ -42,9 +42,9 @@ namespace DataAccess.Repositories
             _BookingFlightContext.SaveChanges();
         }
 
-        public void Cancel(int ticketId)
+        public void CancelTicket(Guid Id)
         {
-            var ticket = _BookingFlightContext.Tickets.Find(ticketId);
+            var ticket = _BookingFlightContext.Tickets.Find(Id);
             if (ticket != null)
             {
                 ticket.Cancelled = true;

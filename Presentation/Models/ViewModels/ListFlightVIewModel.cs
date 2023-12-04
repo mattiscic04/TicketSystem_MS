@@ -15,12 +15,22 @@ namespace Presentation.Models.ViewModels
         [Required]
         public int Columns { get; set; }
 
+        [Display(Name = "Departure Date")]
         public DateTime DepartureDate { get; set; }
+
+        [Display(Name = "Arrival Date")]
         public DateTime ArrivalDate { get; set; }
+
+        [Display(Name = "Country From")]
         public string CountryFrom { get; set; }
+
+        [Display(Name = "Country To")]
         public string CountryTo { get; set; }
         public double WholesalePrice { get; set; }
         public double CommisionRate { get; set; }
+
+        [Display(Name = "Retail Price")]
+        public double retailPrice { get; set; }
 
     }
 }

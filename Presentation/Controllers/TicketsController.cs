@@ -38,7 +38,8 @@ namespace Presentation.Controllers
                              DepartureDate = f.DepartureDate,
                              ArrivalDate = f.ArrivalDate,
                              CountryFrom = f.CountryTo,
-                             CountryTo = f.CountryFrom
+                             CountryTo = f.CountryFrom,
+                             retailPrice = f.WholesalePrice*f.CommisionRate
                          };
 
             return View(output);
@@ -69,6 +70,21 @@ namespace Presentation.Controllers
                     return RedirectToAction("Index");
                 }
 
+                ////Check if the selected flight is fully booked or canceled
+                //var existingTickets = _ticketRepository.GetTicketsForFlight(Id);
+                //if (existingTickets.Any(t => !t.Cancelled) && existingTickets.Count() >= (existingFlight.Rows * existingFlight.Columns))
+                //{
+                //    TempData["error"] = "The selected flight is fully booked.";
+                //    return RedirectToAction("Index");
+                //}
+
+                // Check if the flight departure date is in the future
+                if (existingFlight.DepartureDate <= DateTime.Now)
+                {
+                    TempData["error"] = "The selected flight has already departed or is in the past.";
+                    return RedirectToAction("Index");
+                }
+
                 string filename = Guid.NewGuid() + Path.GetExtension(myModel.Passport.FileName);
 
                 string absolutePath = host.WebRootPath + @"\images\" + filename;
@@ -82,6 +98,11 @@ namespace Presentation.Controllers
                     fs.Close();
                 }
 
+                // Calculate PricePaid after commission on WholesalePrice
+                double commissionRate = existingFlight.CommisionRate;
+                double wholesalePrice = existingFlight.WholesalePrice;
+                double pricePaid = wholesalePrice + (wholesalePrice * commissionRate);
+
                 _ticketRepository.Book(new Ticket()
                 {
                     FlightIdFK = Id,
@@ -89,21 +110,48 @@ namespace Presentation.Controllers
                     Surname = myModel.Surname,
                     Row = myModel.Row,
                     Column = myModel.Column,
-                    Passport = relativePath
+                    Passport = relativePath,
+                    PricePaid = pricePaid,
+                    //Owner = User.Identity.Name
+
                 });
 
-                TempData["message"] = "Ticket saved Successfully";
+                TempData["message"] = "Ticket booked Successfully";
 
                 return RedirectToAction("Index");
 
             }
             catch (Exception ex)
             {
-                TempData["error"] = "Tickets was not saved Successfully";
+                TempData["error"] = "Tickets was not booked Successfully";
                 return View(myModel);
             }
 
         }
+
+        //public IActionResult Delete(Guid id)
+        //{
+        //    try
+        //    {
+        //        if (User.Identity.Name == _ticketRepository.GetTicket(id).Owner)
+        //        {
+        //            _ticketRepository.CancelTicket(id);
+        //            TempData["message"] = "Ticket cancelled successfully";
+        //        }
+        //        else
+        //        {
+        //            TempData["error"] = "Access denied";
+        //        }
+
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        TempData["error"] = "Tickets was not Cancelled; Input might have been tampered and Ticket not found";
+        //    }
+
+        //    return RedirectToAction("Index");
+        //}
 
 
     }

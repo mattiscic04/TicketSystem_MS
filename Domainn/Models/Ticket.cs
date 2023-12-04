@@ -26,6 +26,9 @@ namespace Domain.Models
 
         [Required]
         public string Surname { get; set; }
+
+        //public string? Owner { get; set; }
+
         public int Row { get; set; }
         public int Column { get; set; }
 

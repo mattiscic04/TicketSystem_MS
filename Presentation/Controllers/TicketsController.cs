@@ -1,4 +1,5 @@
-﻿using DataAccess.Repositories;
+﻿using DataAccess.Interface;
+using DataAccess.Repositories;
 using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.Models.ViewModels;
@@ -7,15 +8,16 @@ namespace Presentation.Controllers
 {
     public class TicketsController : Controller
     {
-
+        private ITicketRepository _IticketRepository;
         private TicketDBRepository _ticketRepository;
         private FlightDbRepository _flightRepository;
 
 
-        public TicketsController(TicketDBRepository ticketRepository, FlightDbRepository flightRepository)
+        public TicketsController(TicketDBRepository ticketRepository, FlightDbRepository flightRepository, ITicketRepository IticketRepository)
         {
             _ticketRepository = ticketRepository;
             _flightRepository = flightRepository;
+            _IticketRepository = IticketRepository;
 
         }
 
@@ -117,22 +119,26 @@ namespace Presentation.Controllers
                 double wholesalePrice = existingFlight.WholesalePrice;
                 double pricePaid = wholesalePrice + (wholesalePrice * commissionRate);
 
-                    _ticketRepository.Book(new Ticket()
+                var PassengerFound = _IticketRepository.GetTickets().SingleOrDefault(x => x.PassportNo == myModel.PassportNo);
+                if (PassengerFound == null)
+                {
+                    _IticketRepository.Book(new Ticket()
                     {
                         FlightIdFK = Id,
                         Name = myModel.Name,
                         Surname = myModel.Surname,
                         Row = myModel.Row,
                         Column = myModel.Column,
+                        PassportNo = myModel.PassportNo,
                         Passport = relativePath,
                         PricePaid = pricePaid,
                         //Owner = User.Identity.Name
 
                     });
+                }
 
-                    TempData["message"] = "Ticket booked Successfully";
-                    return RedirectToAction("Index");
-
+                TempData["message"] = "Ticket booked Successfully";
+                return RedirectToAction("Index");
 
             }
             catch (Exception ex)

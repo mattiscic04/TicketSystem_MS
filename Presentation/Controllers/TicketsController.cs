@@ -85,7 +85,6 @@ namespace Presentation.Controllers
                 }
 
 
-
                 ////Check if the selected flight is fully booked or canceled
                 //var existingTickets = _ticketRepository.GetTicketsForFlight(Id);
                 //if (existingTickets.Any(t => !t.Cancelled) && existingTickets.Count() >= (existingFlight.Rows * existingFlight.Columns))
@@ -119,10 +118,33 @@ namespace Presentation.Controllers
                 double wholesalePrice = existingFlight.WholesalePrice;
                 double pricePaid = wholesalePrice + (wholesalePrice * commissionRate);
 
-                var PassengerFound = _IticketRepository.GetTickets().SingleOrDefault(x => x.PassportNo == myModel.PassportNo);
-                if (PassengerFound == null)
+                if (myModel.Row <= 0 || myModel.Column <= 0)
                 {
-                    _IticketRepository.Book(new Ticket()
+                    TempData["error"] = "Please select another seat";
+
+                    var flights = _flightRepository.GetFlights().ToList();
+
+                    var selectedFlight = flights.FirstOrDefault(flight => flight.Id == Id);
+
+                    myModel.SelectedFlight = selectedFlight;
+                    return View(myModel);
+                }
+                if (_ticketRepository.isSeatBooked(Id, myModel.Row, myModel.Column))
+                {
+                    TempData["error"] = "Seat is already Booked, Please choose another seat";
+
+                    var flights = _flightRepository.GetFlights().ToList();
+
+                    var selectedFlight = flights.FirstOrDefault(flight => flight.Id == Id);
+
+                    myModel.SelectedFlight = selectedFlight;
+                    return View(myModel);
+                }
+
+                //var PassengerFound = _ticketRepository.GetTicket().SingleOrDefault(x => x.PassportNo == myModel.PassportNo);
+                //if (PassengerFound == null)
+                //{
+                _ticketRepository.Book(new Ticket()
                     {
                         FlightIdFK = Id,
                         Name = myModel.Name,
@@ -135,10 +157,15 @@ namespace Presentation.Controllers
                         //Owner = User.Identity.Name
 
                     });
-                }
 
-                TempData["message"] = "Ticket booked Successfully";
-                return RedirectToAction("Index");
+                    TempData["message"] = "Ticket booked Successfully";
+                    return RedirectToAction("Index");
+                //}
+                //else
+                //{
+                //    TempData["error"] = "Tickets was not booked Successfully";
+                //    return View(myModel);
+                //}
 
             }
             catch (Exception ex)

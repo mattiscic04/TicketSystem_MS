@@ -5,32 +5,51 @@
 }
 
 <style>
+
+
     .seat-picker {
         display: grid;
         grid-template-columns: repeat(@Model.SelectedFlight.Columns, 1fr);
         gap: 10px;
+        margin: 20px;
     }
 
     .seat {
         width: 50px;
         height: 50px;
-        border: 1px solid #ccc;
+        border: 2px solid #FFB300;
+        border-radius: 5px;
         display: flex;
         align-items: center;
         justify-content: center;
         cursor: pointer;
+        font-weight: bold;
+        font-size: 1.2em;
+        color: #FFB300;
+        background-size: cover;
+        background-repeat: no-repeat;
+        transition: background-color 0.3s, color 0.3s, transform 0.3s;
     }
 
+        .seat:hover {
+            background-color: #FFB300;
+            color: #fff;
+        }
+
         .seat.disabled {
-            background-color: #ddd;
+            background-color: #FF0000; /* Red color for booked seats */
             cursor: not-allowed;
+            color: #fff;
         }
 
         .seat.selected {
-            background-color: #3498db;
+            background-color: #FFA000;
             color: #fff;
+            transform: scale(1.1);
         }
 </style>
+
+
 
 <h1>Create</h1>
 
@@ -89,6 +108,14 @@
                 selectedSeats.delete(seatId);
                 seat.classList.remove('selected');
             } else {
+                // Check if the seat is already selected
+                const isSeatAlreadySelected = Array.from(selectedSeats).some(selected => selected.startsWith(`${seat.dataset.row}-${seat.dataset.column}`));
+
+                if (isSeatAlreadySelected) {
+                    alert('This seat is already selected. Please choose another seat.');
+                    return; // Stop further execution
+                }
+
                 selectedSeats.add(seatId);
                 seat.classList.add('selected');
             }

@@ -31,11 +31,11 @@ namespace DataAccess.Repositories
         public void Book(Ticket ticket)
         {
 
-            // This method is to check if double booking is made
-            if (_BookingFlightContext.Tickets.Any(t => t.Row == ticket.Row && t.Column == ticket.Column && t.FlightIdFK == ticket.FlightIdFK))
-            {
-                throw new InvalidOperationException("The seat you chose is already booked");
-            }
+            //// This method is to check if double booking is made
+            //if (_BookingFlightContext.Tickets.Any(t => t.Row == ticket.Row && t.Column == ticket.Column && t.FlightIdFK == ticket.FlightIdFK))
+            //{
+            //    throw new InvalidOperationException("The seat you chose is already booked");
+            //}
 
 
             _BookingFlightContext.Tickets.Add(ticket);
@@ -69,6 +69,11 @@ namespace DataAccess.Repositories
                 .Include(t => t.FlightIdFK)
                 .Where(t => t.FlightIdFK == flightId)
                 .ToList();
+        }
+
+        public bool isSeatBooked(Guid id, int row, int column)
+        {
+            throw new NotImplementedException();
         }
     }
 }

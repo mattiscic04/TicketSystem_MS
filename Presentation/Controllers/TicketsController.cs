@@ -141,10 +141,10 @@ namespace Presentation.Controllers
                     return View(myModel);
                 }
 
-                //var PassengerFound = _ticketRepository.GetTicket().SingleOrDefault(x => x.PassportNo == myModel.PassportNo);
-                //if (PassengerFound == null)
-                //{
-                _ticketRepository.Book(new Ticket()
+                var PassengerFound = _ticketRepository.GetTicket().SingleOrDefault(x => x.PassportNo == myModel.PassportNo);
+                if (PassengerFound == null)
+                {
+                    _ticketRepository.Book(new Ticket()
                     {
                         FlightIdFK = Id,
                         Name = myModel.Name,
@@ -160,12 +160,16 @@ namespace Presentation.Controllers
 
                     TempData["message"] = "Ticket booked Successfully";
                     return RedirectToAction("Index");
-                //}
-                //else
-                //{
-                //    TempData["error"] = "Tickets was not booked Successfully";
-                //    return View(myModel);
-                //}
+                }
+                else
+                {
+                    TempData["error"] = "A Passenger with the same Passport Number is already booked";
+
+                    var flights = _flightRepository.GetFlights().ToList();
+                    var selectedFlight = flights.FirstOrDefault(flight => flight.Id == Id);
+                    myModel.SelectedFlight = selectedFlight;
+                    return View(myModel);
+                }
 
             }
             catch (Exception ex)

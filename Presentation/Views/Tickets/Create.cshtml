@@ -98,24 +98,13 @@
             const seat = this;
             const seatId = `${seat.dataset.row}-${seat.dataset.column}`;
 
-            // Check if the seat is booked
-            if (seat.classList.contains('booked')) {
-                alert('This seat is already booked. Please choose another seat.');
-                return; // Stop further execution
-            }
+            // Clear previous selections
+            clearSelectedSeats();
 
-            if (selectedSeats.has(seatId)) {
-                selectedSeats.delete(seatId);
-                seat.classList.remove('selected');
-            } else {
-                // Check if the seat is already selected
-                const isSeatAlreadySelected = Array.from(selectedSeats).some(selected => selected.startsWith(`${seat.dataset.row}-${seat.dataset.column}`));
+            // Check if the seat is already selected
+            const isSeatAlreadySelected = Array.from(selectedSeats).some(selected => selected.startsWith(`${seat.dataset.row}-${seat.dataset.column}`));
 
-                if (isSeatAlreadySelected) {
-                    alert('This seat is already selected. Please choose another seat.');
-                    return; // Stop further execution
-                }
-
+            if (!isSeatAlreadySelected) {
                 selectedSeats.add(seatId);
                 seat.classList.add('selected');
             }
@@ -124,9 +113,19 @@
             updateFormInputs();
         }
 
+        // Function to clear all selected seats
+        function clearSelectedSeats() {
+            const selectedSeatElements = document.querySelectorAll('.seat.selected');
+            selectedSeatElements.forEach(selectedSeat => {
+                const [row, column] = selectedSeat.innerText.split('-');
+                const seatId = `${row}-${column}`;
+                selectedSeats.delete(seatId);
+                selectedSeat.classList.remove('selected');
+            });
+        }
 
         // Function to update form inputs
-        function updateFormInputs() {
+        function updateFormInputs(row, column) {
             const selectedSeat = Array.from(selectedSeats)[0]; 
             if (selectedSeat) {
                 const [row, column] = selectedSeat.split('-');

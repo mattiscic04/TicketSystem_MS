@@ -67,13 +67,13 @@ namespace DataAccess.Repositories
         {
             return _BookingFlightContext.Tickets
                 .Include(t => t.FlightIdFK)
-                .Where(t => t.FlightIdFK == flightId)
+                .Where(t => t.FlightIdFK == flightId) 
                 .ToList();
         }
 
-        public bool isSeatBooked(Guid id, int row, int column)
+        public bool CheckBookedSeats(Guid fId, int row, int column) 
         {
-            throw new NotImplementedException();
+            return _BookingFlightContext.Tickets.Any(t => t.FlightIdFK == fId && t.Row == row && t.Column == column);
         }
     }
 }

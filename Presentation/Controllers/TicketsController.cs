@@ -129,7 +129,7 @@ namespace Presentation.Controllers
                     myModel.SelectedFlight = selectedFlight;
                     return View(myModel);
                 }
-                if (_ticketRepository.isSeatBooked(Id, myModel.Row, myModel.Column))
+                if (_ticketRepository.CheckBookedSeats(Id, myModel.Row, myModel.Column))
                 {
                     TempData["error"] = "Seat is already Booked, Please choose another seat";
 

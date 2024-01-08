@@ -100,6 +100,16 @@ namespace Presentation.Controllers
                     return RedirectToAction("Index");
                 }
 
+                if (myModel.Passport == null || myModel.Passport.Length == 0)
+                {
+                    TempData["error"] = "Please Upload an Image of your Passport";
+
+                    var flights = _flightRepository.GetFlights().ToList();
+                    var selectedFlight = flights.FirstOrDefault(flight => flight.Id == Id);
+                    myModel.SelectedFlight = selectedFlight;
+                    return View(myModel);
+                }
+
                 string filename = Guid.NewGuid() + Path.GetExtension(myModel.Passport.FileName);
 
                 string absolutePath = host.WebRootPath + @"\images\" + filename;
@@ -129,6 +139,17 @@ namespace Presentation.Controllers
                     myModel.SelectedFlight = selectedFlight;
                     return View(myModel);
                 }
+                if (myModel.PassportNo == null)
+                {
+                    TempData["error"] = "Please enter a Passport Number";
+
+                    var flights = _flightRepository.GetFlights().ToList();
+
+                    var selectedFlight = flights.FirstOrDefault(flight => flight.Id == Id);
+
+                    myModel.SelectedFlight = selectedFlight;
+                    return View(myModel);
+                }
                 if (_ticketRepository.CheckBookedSeats(Id, myModel.Row, myModel.Column))
                 {
                     TempData["error"] = "Seat is already Booked, Please choose another seat";
@@ -140,6 +161,20 @@ namespace Presentation.Controllers
                     myModel.SelectedFlight = selectedFlight;
                     return View(myModel);
                 }
+
+                if (myModel.Name == null || myModel.Surname == null)
+                {
+                    TempData["error"] = "Please Enter your Full Name";
+
+                    var flights = _flightRepository.GetFlights().ToList();
+
+                    var selectedFlight = flights.FirstOrDefault(flight => flight.Id == Id);
+
+                    myModel.SelectedFlight = selectedFlight;
+                    return View(myModel);
+                }
+
+                
 
                 var PassengerFound = _ticketRepository.GetTicket().SingleOrDefault(x => x.PassportNo == myModel.PassportNo);
                 if (PassengerFound == null)

@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<Presentation.Models.ViewModels.AdminFlightViewModel>
 
 @{
-    ViewData["Title"] = "ListFlights";
+    ViewData["Title"] = "List of Flights";
 }
 
 <h1>ListFlights</h1>
@@ -80,11 +80,6 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.IsFullyBooked)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
             </td>
         </tr>
 }

@@ -2,16 +2,22 @@
 using Microsoft.AspNetCore.Mvc;
 using DataAccess.Repositories;
 using Presentation.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Presentation.Controllers
 {
+    [Authorize]
     public class AdminController : Controller
     {
-        private readonly TicketDBRepository _ticketRepository;
 
-        public AdminController(TicketDBRepository ticketRepository)
+        private readonly TicketDBRepository _ticketRepository;
+        private readonly FlightDbRepository _flightDbRepository;
+
+
+        public AdminController(TicketDBRepository ticketRepository, FlightDbRepository flightDbRepository)
         {
             _ticketRepository = ticketRepository;
+            _flightDbRepository = flightDbRepository;
         }
 
         public IActionResult ListTickets()
@@ -32,7 +38,28 @@ namespace Presentation.Controllers
 
             return View(viewModelList);
         }
-        
+
+        public IActionResult ListFlights()
+        {
+            var flights = _flightDbRepository.GetFlights().ToList();
+            var viewModelList = flights.Select(f => new AdminFlightViewModel
+            {
+                Id = f.Id,
+                Rows = f.Rows,
+                Columns = f.Columns,
+                DepartureDate = f.DepartureDate,
+                ArrivalDate = f.ArrivalDate,
+                CountryFrom = f.CountryTo,
+                CountryTo = f.CountryFrom,
+                WholesalePrice = f.WholesalePrice,
+                CommisionRate = f.CommisionRate,
+                retailPrice = f.WholesalePrice * f.CommisionRate,
+
+            }).ToList();
+
+            return View(viewModelList);
+        }
+
         public IActionResult Index()
         {
             if (User.Identity.IsAuthenticated == false)

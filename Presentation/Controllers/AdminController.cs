@@ -29,6 +29,7 @@ namespace Presentation.Controllers
                 Surname = t.Surname,
                 Row = t.Row,
                 Column = t.Column,
+                FlightIdFK = t.FlightIdFK,
                 Cancelled = t.Cancelled,
                 PassportNo = t.PassportNo,
                 PricePaid = t.PricePaid

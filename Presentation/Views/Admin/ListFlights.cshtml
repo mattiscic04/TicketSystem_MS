@@ -1,10 +1,10 @@
 ﻿@model IEnumerable<Presentation.Models.ViewModels.AdminFlightViewModel>
 
 @{
-    ViewData["Title"] = "List of Flights";
+    ViewData["Title"] = "ListFlights";
 }
 
-<h1>ListFlights</h1>
+<h1>List of Flights</h1>
 
 <table class="table">
     <thead>
@@ -81,6 +81,7 @@
             <td>
                 @Html.DisplayFor(modelItem => item.IsFullyBooked)
             </td>
+
         </tr>
 }
     </tbody>
